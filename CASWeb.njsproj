@@ -58,6 +58,7 @@
     <Compile Include="api\controllers\repositoryController.js" />
     <Compile Include="api\controllers\uiController.js" />
     <Compile Include="api\controllers\userController.js" />
+    <Compile Include="api\models\Staticbf.js" />
     <Compile Include="api\models\Commit.js" />
     <Compile Include="api\models\Feedback.js" />
     <Compile Include="api\models\Glmcoefficients.js" />
