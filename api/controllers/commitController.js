@@ -99,10 +99,26 @@ var CommitController = {
                 // Loop through each commit
                 for(var i = 0, l = commits.length; i < l; i++) {
 
+                    commits[i]['staticWarnings'] = [];
+
                     // Normalize the fileschanged
                     commits[i].fileschanged = commits[i].fileschanged
                     .split(",CAS_DELIMITER").map(function(file) {
-                        return file.replace(/(^,)|(,$)/, '');
+                            file = file.replace(/(^,)|(,$)/, '');
+
+
+                            commits[i]['staticWarnings'].push({file_name: file, warning: "test"});
+                            //var warningsQuery = Staticbf.find({resource: file});
+                            //warningsQuery.done(function(err, warnings){
+                            //    if(err) {
+                            //        sails.log.error(err);
+                            //        commits[i]['staticWarnings'].push({file_name: file, warning: "db error"});
+                            //    } else {
+                            //        commits[i]['staticWarnings'].push({file_name: file, warning: "warnings"});
+                            //    }
+                            //});
+
+                            return file
                     });
                 }
                 return res.json({success: true, commits: commits});

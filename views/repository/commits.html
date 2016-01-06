@@ -102,6 +102,16 @@
 							<span style="cursor: pointer;" class="label label-success label-inline" ng-repeat="fixed in commit.fixes" ng-click="search.commit_hash = fixed; $parent.$parent.$parent.showFilterCommits = true; handleCommitSearch();">{{fixed}}</span>
 						</div>
 					</div>
+                    <div class="row">
+                        <div class="col-md-12">
+                            <ul class="list-group">
+                                <div class="list-group-item" ng-repeat="fileWarnings in commit.staticWarnings">
+                                    <h4 class="list-group-item-heading">{{fileWarnings.file_name}}</h4>
+                                    <p class="list-group-item-text">{{fileWarnings.warning | json}}</p>
+                                </div>
+                            </ul>
+                        </div>
+                    </div>
 					<form ng-show="user.status.authenticated" class="form-inline pull-right" name="commit.feedback" ng-submit="submitFeedback(commit)">
 						<div ng-show="show_commit_feedback"> 
 							<div class="form-group">	
