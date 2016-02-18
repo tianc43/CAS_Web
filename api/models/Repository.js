@@ -39,6 +39,11 @@ module.exports = {
 			required: false
 		},
 
+		last_ingested_commit:{
+			type: 'string',
+			required: false
+		},
+
 		analysis_date: {
 			type: 'string',
 			required: false

@@ -102,24 +102,26 @@ var CommitController = {
                     commits[i]['staticWarnings'] = [];
 
                     // Normalize the fileschanged
-                    commits[i].fileschanged = commits[i].fileschanged
-                    .split(",CAS_DELIMITER").map(function(file) {
-                            file = file.replace(/(^,)|(,$)/, '');
+                    commits[i].fileschanged = JSON.parse(commits[i].fileschanged)
 
-
-                            commits[i]['staticWarnings'].push({file_name: file, warning: "test"});
-                            //var warningsQuery = Staticbf.find({resource: file});
-                            //warningsQuery.done(function(err, warnings){
-                            //    if(err) {
-                            //        sails.log.error(err);
-                            //        commits[i]['staticWarnings'].push({file_name: file, warning: "db error"});
-                            //    } else {
-                            //        commits[i]['staticWarnings'].push({file_name: file, warning: "warnings"});
-                            //    }
-                            //});
-
-                            return file
-                    });
+                    //commits[i].fileschanged
+                    //.split(",CAS_DELIMITER").map(function(file) {
+                    //        file = file.replace(/(^,)|(,$)/, '');
+                    //
+                    //
+                    //        commits[i]['staticWarnings'].push({file_name: file, warning: "test"});
+                    //        //var warningsQuery = Staticbf.find({resource: file});
+                    //        //warningsQuery.done(function(err, warnings){
+                    //        //    if(err) {
+                    //        //        sails.log.error(err);
+                    //        //        commits[i]['staticWarnings'].push({file_name: file, warning: "db error"});
+                    //        //    } else {
+                    //        //        commits[i]['staticWarnings'].push({file_name: file, warning: "warnings"});
+                    //        //    }
+                    //        //});
+                    //
+                    //        return file
+                    //});
                 }
                 return res.json({success: true, commits: commits});
             })
