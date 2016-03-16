@@ -58,12 +58,13 @@
     <Compile Include="api\controllers\repositoryController.js" />
     <Compile Include="api\controllers\uiController.js" />
     <Compile Include="api\controllers\userController.js" />
-    <Compile Include="api\models\Staticbf.js" />
     <Compile Include="api\models\Commit.js" />
     <Compile Include="api\models\Feedback.js" />
+    <Compile Include="api\models\File.js" />
     <Compile Include="api\models\Glmcoefficients.js" />
     <Compile Include="api\models\Metric.js" />
     <Compile Include="api\models\Repository.js" />
+    <Compile Include="api\models\Static_warning.js" />
     <Compile Include="api\models\User.js" />
     <Compile Include="api\policies\authenticated.js" />
     <Compile Include="api\policies\nonAuthenticated.js" />

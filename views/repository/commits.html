@@ -72,8 +72,14 @@
 					<div class="pull-right">{{commit.author_name}} on {{commit.author_date | timeFormat_calendar}}</div>
 					<div class="panel-title-container">
                         <h3 class="panel-title" ng-click="show_commit_body = !show_commit_body">
-                            <span ng-if="display.type == 'predictive'"><span class="label label-success" ng-class="{'label-danger':commit.glm_probability > .5,'label-warning':commit.glm_probability > .25}">{{commit.glm_probability | decimalToPercent}}</span></span>
-                            <span ng-show="commit.classification != 'None'" class="label label-default">{{commit.classification}}</span><span ng-if="display.type == 'historical'"><span ng-if="commit.contains_bug"> Possible Bug-inducing: </span></span> {{commit.commit_hash.substr(0, 10)}} <em>{{commit.commit_message.substr(0, 60)}}...</em>
+                            <span ng-if="display.type == 'predictive'">
+								<span class="label label-success" ng-class="{'label-danger':commit.glm_probability > .5,'label-warning':commit.glm_probability > .25}">
+									{{commit.glm_probability | decimalToPercent}}
+								</span>
+							</span>
+                            <span ng-show="commit.classification != 'None'" class="label label-default">{{commit.classification}}</span>
+							<span ng-if="display.type == 'historical'"><span ng-if="commit.contains_bug"> Possible Bug-inducing: </span>
+							</span> {{commit.commit_hash.substr(0, 10)}} <em>{{commit.commit_message.substr(0, 60)}}...</em>
                         </h3>
                     </div>
 				</div>
@@ -81,37 +87,85 @@
 					<div class="row">
 						<div class="col-md-12">
 							<div class="row">
-								<div class="col-md-6 inline-col metricGroup" ng-repeat="group in metricGroups">
-									<div class="groupLabel">{{group.name}}</div>
-									<div ng-repeat="key in group.metricKeys | sortBySignificance:repo.metrics[display.metricKey]" class="inline-col" metric ng-class="(group.metricKeys.length == 4)?'col-md-3':'col-md-4'">{{metricValues[key] + (repo.metrics[display.metricKey][key + '_sig']?'*':'')}}</div>
+									<div class="inline-col metricGroup" ng-class="(group.metricKeys.length == 4)?'col-md-5':'col-md-4'" ng-repeat="group in metricGroups">
+										<div class="groupLabel">{{group.name}}</div>
+										<div ng-repeat="key in group.metricKeys | sortBySignificance:repo.metrics[display.metricKey]" class="inline-col" metric ng-class="(group.metricKeys.length == 4)?'col-md-3':'col-md-4'">{{metricValues[key] + (repo.metrics[display.metricKey][key + '_sig']?'*':'')}}</div>
+									</div>
+
+
+								<div class="col-md-2 inline-col metricGroup">
+									<div class="groupLabel">Static Warnings</div>
+									<!--<div class="inline-col" metric>Warnings</div>-->
+									<div class="alert" ng-class="metricClass">{{total_warnings(commit.staticWarnings)}}</div><!--<div ng-transclude></div>-->
+									<div class="inline-col" >Warnings</div>
+									<!--<div ng-repeat="key in group.metricKeys | sortBySignificance:repo.metrics[display.metricKey]" class="inline-col" metric ng-class="(group.metricKeys.length == 4)?'col-md-3':'col-md-4'">{{metricValues[key] + (repo.metrics[display.metricKey][key + '_sig']?'*':'')}}</div>-->
 								</div>
 							</div>
 						</div>
 					</div>
 					<div class="row">
-						<div class="col-md-4">
+						<div class="col-md-8">
 							<div class="well cont-max-150" ng-bind="commit.commit_message"></div>
 						</div>
-						<div class="col-md-4 cont-max-150" ng-show="(commit.fileschanged || commit.fileschanged.length > 0) && commit.fileschanged[0] != 'NULL'">
-							Updated Files:
-							<span class="label label-primary label-inline" ng-repeat="file in commit.fileschanged">{{file}}</span>
-						</div>
+						<!--<div class="col-md-4 cont-max-150" ng-show="(commit.fileschanged || commit.fileschanged.length > 0) && commit.fileschanged[0] != 'NULL'">-->
+							<!--Updated Files:-->
+							<!--<span class="label label-primary label-inline" ng-repeat="file in commit.fileschanged">{{file}}</span>-->
+						<!--</div>-->
 					
 						<div class="col-md-4 cont-max-150" ng-show="commit.fixes || commit.fixes.length > 0">
 							Fixed By:
 							<span style="cursor: pointer;" class="label label-success label-inline" ng-repeat="fixed in commit.fixes" ng-click="search.commit_hash = fixed; $parent.$parent.$parent.showFilterCommits = true; handleCommitSearch();">{{fixed}}</span>
 						</div>
 					</div>
-                    <div class="row">
-                        <div class="col-md-12">
-                            <ul class="list-group">
-                                <div class="list-group-item" ng-repeat="fileWarnings in commit.staticWarnings">
-                                    <h4 class="list-group-item-heading">{{fileWarnings.file_name}}</h4>
-                                    <p class="list-group-item-text">{{fileWarnings.warning | json}}</p>
-                                </div>
-                            </ul>
-                        </div>
-                    </div>
+					<div class="row">
+						<div class="col-md-12 panel-body">
+							<div class="panel commit-panel panel-default">
+								<div class="panel-heading"><h4>Updated Files</h4></div>
+
+							</div>
+
+							<div ng-repeat="file in commit.fileschanged">
+								<div class="panel commit-panel panel-default">
+									<div ng-init="commit.fixes = $eval(commit.fixes)" class="panel-heading">
+										<div class="pull-right">
+											<!--<span class=" glyphicon glyphicon-flash" aria-hidden="true"></span>-->
+											<span>Warnings </span>
+											<span class="badge">{{file_warnings(commit.staticWarnings, file)}}</span>
+											&#x25BC
+										</div>
+										<div class="panel-title-container">
+											<h3 class="panel-title" ng-click="show_warning_body = !show_warning_body">
+												<span>{{file}}</span>
+											</h3>
+										</div>
+									</div>
+									<div class="panel-body" ng-if="show_warning_body">
+										<table class="table">
+											<thead>
+												<tr>
+													<th>Line</th>
+													<th>Tool</th>
+													<th>SFP</th>
+													<th>CWE</th>
+													<th>Description</th>
+												</tr>
+											</thead>
+											<tbody>
+												<tr ng-repeat="warning in commit.staticWarnings[file]">
+													<td>{{warning.line_number}}</td>
+													<td>{{warning.generator_tool}}</td>
+													<td>{{warning.sfp}}</td>
+													<td>{{warning.cwe}}</td>
+													<td>{{warning.weakness_description}}</td>
+												</tr>
+											</tbody>
+										</table>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+
 					<form ng-show="user.status.authenticated" class="form-inline pull-right" name="commit.feedback" ng-submit="submitFeedback(commit)">
 						<div ng-show="show_commit_feedback"> 
 							<div class="form-group">	

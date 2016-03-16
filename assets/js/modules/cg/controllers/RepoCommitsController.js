@@ -7,6 +7,18 @@ angular.module('cg').controller('RepoCommitsController', function($scope, socket
     	metricKey: 'median',
         sort: $stateParams.sort || '-time'
     };
+
+    $scope.file_warnings = function(warnings, file){
+        return warnings[file].length;
+    };
+
+    $scope.total_warnings = function(warnings){
+        var warning_count = 0;
+        for (var file in warnings) {
+            warning_count += warnings[file].length
+        }
+        return warning_count;
+    };
 	
 	var handleCommitSearch = function(newValue, oldValue) {
         
@@ -106,9 +118,9 @@ angular.module('cg').controller('RepoCommitsController', function($scope, socket
 			});
 		}
 	};
-	
-	
-    
+
+
+    $scope.show_warning_body = false;
     $scope.show_commit_body = false;
     $scope.show_commit_body_options = [{
     	value: false, 

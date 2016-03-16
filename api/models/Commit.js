@@ -123,7 +123,6 @@ module.exports = {
 			type: 'FLOAT',
 			defaultsTo: 0
 		}
-
 	}
 
 };

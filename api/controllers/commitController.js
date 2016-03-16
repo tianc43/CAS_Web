@@ -74,16 +74,44 @@ var CommitController = {
             if(!sort) {
                 sort = 'author_date_unix_timestamp DESC';
             }
-            
-            var query = Commit.find({repository_id: repo.id});
-            if(criteriaCount > 0) {
-                query.where(critera);
-            }
-            query.paginate(paginationOptions)
-            .sort(sort)
-            .done(function(err, commits){
+
+            var Promise = require('bluebird');
+            var userQueryAsync = Promise.promisify(Commit.query);
+            var queryStr = "SELECT * FROM COMMITS " +
+                " WHERE REPOSITORY_ID = '" + repo.id + "' " +
+                " ORDER BY " + sort +
+                " LIMIT " + paginationOptions.limit +
+                " OFFSET " + paginationOptions.page;
+
+            var joinFiles = "SELECT * FROM (" +
+                queryStr +
+                ") as sel, files" +
+                " WHERE files.commit_hash = sel.commit_hash" +
+                " AND files.repository_id = sel.repository_id";
+
+            var outerJoin = "SELECT * FROM (" +
+                joinFiles +
+                ") as all_files " +
+                " LEFT JOIN static_warnings " +
+                " ON all_files.file_name = resource " +
+                " ORDER BY " + sort;
+            sails.log.info("Query: " + outerJoin);
+            var query = userQueryAsync(outerJoin);
+            //var query = Commit.find({repository_id: repo.id});
+            //if(criteriaCount > 0) {
+            //    query.where(critera);
+            //}
+            //query.paginate(paginationOptions)
+            //.sort(sort)
+            //.done(function(err, commits){
+
+            query.then(function(commits){
+
+                commits = commits.rows;
+                //sails.log.info(commits);
 
                 // ERROR CHECKING FOR COMMITS
+                // TODO need to make sure that errors are still handled
                 if(err) {
                     sails.log.error(err);
                     return res.json({success: false, error: err});
@@ -95,14 +123,14 @@ var CommitController = {
                 }
 
                 // COMMITS VALID
+                parsedCommits = {};
+                parsedCommitHashes = [];
 
                 // Loop through each commit
                 for(var i = 0, l = commits.length; i < l; i++) {
 
-                    commits[i]['staticWarnings'] = [];
 
-                    // Normalize the fileschanged
-                    commits[i].fileschanged = JSON.parse(commits[i].fileschanged)
+
 
                     //commits[i].fileschanged
                     //.split(",CAS_DELIMITER").map(function(file) {
@@ -122,8 +150,39 @@ var CommitController = {
                     //
                     //        return file
                     //});
+
+                    if (parsedCommitHashes.indexOf(commits[i].commit_hash) < 0){
+                        commits[i]['staticWarnings'] = {};
+
+                        // Normalize the fileschanged
+                        commits[i].fileschanged = JSON.parse(commits[i].fileschanged);
+
+                        commits[i].fileschanged.forEach(function(file) {
+                            commits[i]['staticWarnings'][file] = []
+                        });
+
+                        parsedCommits[commits[i].commit_hash] = commits[i];
+                        parsedCommitHashes.push(commits[i].commit_hash);
+                    }
+
+                    if (commits[i].SFP){
+                        //sails.log.info(parsedCommits);
+                        var warning = {
+                            line_number: commits[i].line_number,
+                            sfp: commits[i].SFP,
+                            cwe: commits[i].CWE,
+                            generator_tool: commits[i].generator_tool,
+                            weakness_description: commits[i].weakness_description
+                        };
+                        parsedCommits[commits[i].commit_hash]['staticWarnings'][commits[i]['file_name']].push(warning)
+                    }
                 }
-                return res.json({success: true, commits: commits});
+                var orderedCommits = [];
+                parsedCommitHashes.forEach(function(commit_hash){
+                    orderedCommits.push(parsedCommits[commit_hash])
+                });
+                sails.log.info(parsedCommits);
+                return res.json({success: true, commits: orderedCommits});
             })
         });
     },

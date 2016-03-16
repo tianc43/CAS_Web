@@ -4,16 +4,16 @@
 
 
 module.exports = {
-    tableName: 'staticbf',
+    tableName: 'static_warnings',
     migrate: 'safe',
     autoCreatedAt: false,
     autoUpdatedAt: false,
     autoPK: false,
     attributes: {
-        sfp: {
+        SFP: {
             type: 'STRING'
         },
-        cwe: {
+        CWE: {
             type: 'STRING'
         },
         valid: {
