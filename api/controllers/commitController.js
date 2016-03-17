@@ -129,28 +129,6 @@ var CommitController = {
                 // Loop through each commit
                 for(var i = 0, l = commits.length; i < l; i++) {
 
-
-
-
-                    //commits[i].fileschanged
-                    //.split(",CAS_DELIMITER").map(function(file) {
-                    //        file = file.replace(/(^,)|(,$)/, '');
-                    //
-                    //
-                    //        commits[i]['staticWarnings'].push({file_name: file, warning: "test"});
-                    //        //var warningsQuery = Staticbf.find({resource: file});
-                    //        //warningsQuery.done(function(err, warnings){
-                    //        //    if(err) {
-                    //        //        sails.log.error(err);
-                    //        //        commits[i]['staticWarnings'].push({file_name: file, warning: "db error"});
-                    //        //    } else {
-                    //        //        commits[i]['staticWarnings'].push({file_name: file, warning: "warnings"});
-                    //        //    }
-                    //        //});
-                    //
-                    //        return file
-                    //});
-
                     if (parsedCommitHashes.indexOf(commits[i].commit_hash) < 0){
                         commits[i]['staticWarnings'] = {};
 
@@ -168,7 +146,7 @@ var CommitController = {
                     if (commits[i].SFP){
                         //sails.log.info(parsedCommits);
                         var warning = {
-                            line_number: commits[i].line_number,
+                            line_number: parseInt(commits[i].line_number, 10),
                             sfp: commits[i].SFP,
                             cwe: commits[i].CWE,
                             generator_tool: commits[i].generator_tool,

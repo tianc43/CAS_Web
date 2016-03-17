@@ -151,7 +151,7 @@
 												</tr>
 											</thead>
 											<tbody>
-												<tr ng-repeat="warning in commit.staticWarnings[file]">
+												<tr ng-repeat="warning in commit.staticWarnings[file] | orderBy:'line_number'">
 													<td>{{warning.line_number}}</td>
 													<td>{{warning.generator_tool}}</td>
 													<td>{{warning.sfp}}</td>
