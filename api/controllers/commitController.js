@@ -23,6 +23,8 @@ var CommitController = {
                 page: (+req.param('page')) || 0,
                 limit: (+req.param('limit')) || 20
             };
+
+            sails.log.info(paginationOptions);
             
             var critera = {
                 commit_hash: {like: null},
@@ -80,8 +82,8 @@ var CommitController = {
             var queryStr = "SELECT * FROM COMMITS " +
                 " WHERE REPOSITORY_ID = '" + repo.id + "' " +
                 " ORDER BY " + sort +
-                " LIMIT " + paginationOptions.limit +
-                " OFFSET " + paginationOptions.page;
+                " LIMIT " + (paginationOptions.limit+1) + // TODO +1 work around for next page
+                " OFFSET " + (paginationOptions.page-1) * paginationOptions.limit;
 
             var joinFiles = "SELECT * FROM (" +
                 queryStr +
@@ -159,7 +161,7 @@ var CommitController = {
                 parsedCommitHashes.forEach(function(commit_hash){
                     orderedCommits.push(parsedCommits[commit_hash])
                 });
-                sails.log.info(parsedCommits);
+                //sails.log.info(parsedCommits);
                 return res.json({success: true, commits: orderedCommits});
             })
         });
