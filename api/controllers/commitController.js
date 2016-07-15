@@ -84,19 +84,26 @@ var CommitController = {
                 " ORDER BY " + sort +
                 " LIMIT " + (paginationOptions.limit+1) + // TODO +1 work around for next page
                 " OFFSET " + (paginationOptions.page-1) * paginationOptions.limit;
-
+/*
             var joinFiles = "SELECT * FROM (" +
                 queryStr +
                 ") as sel, files" +
                 " WHERE files.commit_hash = sel.commit_hash" +
                 " AND files.repository_id = sel.repository_id";
+                */
 
             var outerJoin = "SELECT * FROM (" +
-                joinFiles +
+                queryStr +
                 ") as all_files " +
-                " LEFT JOIN static_warnings " +
-                " ON all_files.file_name = resource " +
+                " LEFT JOIN STATIC_COMMIT_LINE_WARNING " +
+                " ON (all_files.commit_hash = commit and repo = '" + repo.id + "') " +
+                // where all_files.repository_id =
                 " ORDER BY " + sort;
+
+            var warningsJoin = "SELECT * FROM ";
+
+            // Need to take into account the commit_hash and repository_id
+
             sails.log.info("Query: " + outerJoin);
             var query = userQueryAsync(outerJoin);
             //var query = Commit.find({repository_id: repo.id});
@@ -145,16 +152,30 @@ var CommitController = {
                         parsedCommitHashes.push(commits[i].commit_hash);
                     }
 
-                    if (commits[i].SFP){
-                        //sails.log.info(parsedCommits);
+                    if (commits[i].sfp){
+                        //sails.log.info(commits[i]);
+                        //sails.log.info(parsedCommits[commits[i].commit_hash]['staticWarnings']);
+
                         var warning = {
-                            line_number: parseInt(commits[i].line_number, 10),
-                            sfp: commits[i].SFP,
-                            cwe: commits[i].CWE,
+                            line_number: parseInt(commits[i].line, 10),
+                            sfp: commits[i].sfp,
+                            cwe: commits[i].cwe,
                             generator_tool: commits[i].generator_tool,
-                            weakness_description: commits[i].weakness_description
+                            weakness_description: commits[i].weakness
                         };
-                        parsedCommits[commits[i].commit_hash]['staticWarnings'][commits[i]['file_name']].push(warning)
+                        //sails.log.info(warning);
+
+                        // TODO bug where file name does not exist
+
+                        try {
+                            parsedCommits[commits[i].commit_hash]['staticWarnings'][commits[i]['resource'].substring(1)].push(warning)
+                        } catch (err) {
+
+                            sails.log.info(err);
+
+                        }
+
+
                     }
                 }
                 var orderedCommits = [];
