@@ -153,7 +153,7 @@
 											</thead>
 											<tbody>
 												<tr ng-repeat="warning in commit.staticWarnings[file] | orderBy:'line_number'">
-													<td>{{warning.line_number}}</td>
+													<td><a href="{{repo.url.slice(0,repo.url.size() -4 )}}/blob/{{commit.commit_hash}}/{{file}}#L{{warning.line_number}}" target="_blank">{{warning.line_number}}</a></td>
 													<td>{{warning.generator_tool}}</td>
 													<td>{{warning.sfp}}</td>
 													<td>{{warning.cwe}}</td>
