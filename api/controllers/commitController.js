@@ -91,13 +91,30 @@ var CommitController = {
                 " WHERE files.commit_hash = sel.commit_hash" +
                 " AND files.repository_id = sel.repository_id";
                 */
+            /*
 
-            var outerJoin = "SELECT * FROM (" +
+             "SELECT repository_id, commit_hash, author_name, author_date_unix_timestamp, author_email, " +
+             " author_date, commit_message, fix, linked, contains_bug, fixes, ns, nd, nf, entrophy, la, ld, " +
+             " fileschanged, lt, ndev, age, nuc, exp, rexp, sexp, glm_probability, STATIC_COMMIT_LINE_WARNING.repo, " +
+             " STATIC_COMMIT_LINE_WARNING.resource, STATIC_COMMIT_LINE_WARNING.line, sfp, cwe, valid, trust, " +
+             " generator_tool, weakness, created, origin_commit, origin_resource, origin_line, is_new_line FROM (" +
+             */
+
+            // todo missing classification
+            var outerJoin = "SELECT repository_id, commit_hash, author_name, author_date_unix_timestamp, author_email, " +
+                " author_date, commit_message, fix, linked, contains_bug, fixes, ns, nd, nf, entrophy, la, ld, " +
+                " fileschanged, lt, ndev, age, nuc, exp, rexp, sexp, glm_probability, STATIC_COMMIT_LINE_WARNING.repo, " +
+                " STATIC_COMMIT_LINE_WARNING.resource, STATIC_COMMIT_LINE_WARNING.line, sfp, cwe, valid, trust, " +
+                " generator_tool, weakness, created, origin_commit, origin_resource, origin_line, is_new_line FROM (" +
                 queryStr +
                 ") as all_files " +
                 " LEFT JOIN STATIC_COMMIT_LINE_WARNING " +
-                " ON (all_files.commit_hash = commit and repo = '" + repo.id + "') " +
-                // where all_files.repository_id =
+                " ON (all_files.commit_hash = STATIC_COMMIT_LINE_WARNING.commit and STATIC_COMMIT_LINE_WARNING.repo = all_files.REPOSITORY_ID) " +
+                " LEFT JOIN STATIC_COMMIT_LINE_BLAME " +
+                " ON (all_files.commit_hash = STATIC_COMMIT_LINE_WARNING.commit " +
+                  " and STATIC_COMMIT_LINE_WARNING.repo = all_files.REPOSITORY_ID " +
+                  " and STATIC_COMMIT_LINE_WARNING.resource = STATIC_COMMIT_LINE_BLAME.resource " +
+                  " and CAST(nullif(STATIC_COMMIT_LINE_WARNING.line, '') AS integer) = STATIC_COMMIT_LINE_BLAME.line)" +
                 " ORDER BY " + sort;
 
             var warningsJoin = "SELECT * FROM ";
@@ -148,6 +165,7 @@ var CommitController = {
                             commits[i]['staticWarnings'][file] = []
                         });
 
+                        //sails.log.info(commits[i]);
                         parsedCommits[commits[i].commit_hash] = commits[i];
                         parsedCommitHashes.push(commits[i].commit_hash);
                     }
@@ -161,7 +179,8 @@ var CommitController = {
                             sfp: commits[i].sfp,
                             cwe: commits[i].cwe,
                             generator_tool: commits[i].generator_tool,
-                            weakness_description: commits[i].weakness
+                            weakness_description: commits[i].weakness,
+                            is_new_line: commits[i].is_new_line
                         };
                         //sails.log.info(warning);
 

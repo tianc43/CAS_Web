@@ -19,7 +19,20 @@ angular.module('cg').controller('RepoCommitsController', function($scope, socket
         }
         return warning_count;
     };
-	
+
+    $scope.new_warnings = function(warnings){
+        var warning_count = 0;
+        for (var file in warnings) {
+            for (var warning in warnings[file])
+                if (warnings[file][warning].is_new_line) {
+                    warning_count += 1
+                }
+            // warning_count += warnings[file].length
+        }
+        return warning_count;
+
+    };
+
 	var handleCommitSearch = function(newValue, oldValue) {
         
         if(newValue === oldValue) {

@@ -77,7 +77,8 @@
 									{{commit.glm_probability | decimalToPercent}}
 								</span>
 							</span>
-							<span class="label label-warning" ng-show="total_warnings(commit.staticWarnings)>0"> Warnings: {{total_warnings(commit.staticWarnings)}}</span>
+							<!--<span class="label label-warning" ng-show="total_warnings(commit.staticWarnings)>0"> Warnings: {{total_warnings(commit.staticWarnings)}}</span>-->
+							<span class="label label-warning" ng-show="total_warnings(commit.staticWarnings)>0"> New Warnings: {{new_warnings(commit.staticWarnings)}}</span>
 							<span ng-show="commit.classification != 'None'" class="label label-default">{{commit.classification}}</span>
 							<span ng-if="display.type == 'historical'"><span ng-if="commit.contains_bug"> Possible Bug-inducing: </span>
 							</span> {{commit.commit_hash.substr(0, 10)}} <em>{{commit.commit_message.substr(0, 60)}}...</em>
@@ -96,10 +97,22 @@
 
 								<div class="col-md-2 inline-col metricGroup">
 									<div class="groupLabel">Static Warnings</div>
-									<!--<div class="inline-col" metric>Warnings</div>-->
-									<div class="alert" ng-class="metricClass">{{total_warnings(commit.staticWarnings)}}</div><!--<div ng-transclude></div>-->
-									<div class="inline-col" >Warnings</div>
-									<!--<div ng-repeat="key in group.metricKeys | sortBySignificance:repo.metrics[display.metricKey]" class="inline-col" metric ng-class="(group.metricKeys.length == 4)?'col-md-3':'col-md-4'">{{metricValues[key] + (repo.metrics[display.metricKey][key + '_sig']?'*':'')}}</div>-->
+
+									<div class="inline-col ng-scope col-md-4">
+										<div class="alert">{{total_warnings(commit.staticWarnings)}}</div>
+										<!--<div ng-transclude="">-->
+										<div>
+											<span class="ng-scope ">Total Warnings</span>
+										</div>
+									</div>
+
+									<div class="inline-col ng-scope col-md-4">
+										<div class="alert ng-binding ">{{new_warnings(commit.staticWarnings)}}</div>
+										<div>
+											<span class="ng-scope ng-binding">New Warnings</span>
+										</div>
+									</div>
+
 								</div>
 							</div>
 						</div>
@@ -152,8 +165,9 @@
 												</tr>
 											</thead>
 											<tbody>
-												<tr ng-repeat="warning in commit.staticWarnings[file] | orderBy:'line_number'">
-													<td><a href="{{repo.url.slice(0,repo.url.size() -4 )}}/blob/{{commit.commit_hash}}/{{file}}#L{{warning.line_number}}" target="_blank">{{warning.line_number}}</a></td>
+												<!--<tr ng-repeat="warning in commit.staticWarnings[file] | orderBy:['is_new_line', 'line_number']">-->
+												<tr ng-repeat="warning in commit.staticWarnings[file] | orderBy:['line_number']">
+													<td><span ng-show="warning.is_new_line">NEW</span><a href="{{repo.url.slice(0,repo.url.size() -4 )}}/blob/{{commit.commit_hash}}/{{file}}#L{{warning.line_number}}" target="_blank">{{warning.line_number}}</a></td>
 													<td>{{warning.generator_tool}}</td>
 													<td>{{warning.sfp}}</td>
 													<td>{{warning.cwe}}</td>
