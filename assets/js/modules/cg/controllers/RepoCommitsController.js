@@ -12,6 +12,16 @@ angular.module('cg').controller('RepoCommitsController', function($scope, socket
         return warnings[file].length;
     };
 
+    $scope.new_file_warning = function(warnings, file){
+        var warning_count = 0;
+        for (var warning in warnings[file]) {
+            if (warnings[file][warning].is_new_line) {
+                warning_count += 1
+            }
+        }
+        return warning_count;
+    };
+
     $scope.total_warnings = function(warnings){
         var warning_count = 0;
         for (var file in warnings) {
