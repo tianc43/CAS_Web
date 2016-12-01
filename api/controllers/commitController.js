@@ -99,21 +99,20 @@ var CommitController = {
              " STATIC_COMMIT_LINE_WARNING.resource, STATIC_COMMIT_LINE_WARNING.line, sfp, cwe, valid, trust, " +
              " generator_tool, weakness, created, origin_commit, origin_resource, origin_line, is_new_line FROM (" +
              */
-
             var outerJoin = "SELECT repository_id, commit_hash, author_name, author_date_unix_timestamp, author_email, " +
                 " author_date, commit_message, fix, linked, contains_bug, classification, fixes, ns, nd, nf, entrophy, la, ld, " +
                 " fileschanged, lt, ndev, age, nuc, exp, rexp, sexp, glm_probability, STATIC_COMMIT_LINE_WARNING.repo, " +
                 " STATIC_COMMIT_LINE_WARNING.resource, STATIC_COMMIT_LINE_WARNING.line, sfp, cwe, valid, trust, " +
-                " generator_tool, weakness, created, origin_commit, origin_resource, origin_line, is_new_line FROM (" +
+                " generator_tool, weakness, STATIC_COMMIT_LINE_WARNING.created, origin_commit, origin_resource, origin_line, is_new_line FROM (" +
                 queryStr +
                 ") as all_files " +
                 " LEFT JOIN STATIC_COMMIT_LINE_WARNING " +
                 " ON (all_files.commit_hash = STATIC_COMMIT_LINE_WARNING.commit and STATIC_COMMIT_LINE_WARNING.repo = all_files.REPOSITORY_ID) " +
                 " LEFT JOIN STATIC_COMMIT_LINE_BLAME " +
                 " ON (all_files.commit_hash = STATIC_COMMIT_LINE_BLAME.commit " +
-                  " and STATIC_COMMIT_LINE_BLAME.repo = all_files.REPOSITORY_ID " +
-                  " and STATIC_COMMIT_LINE_WARNING.resource = STATIC_COMMIT_LINE_BLAME.resource " +
-                  " and CAST(nullif(STATIC_COMMIT_LINE_WARNING.line, '') AS integer) = STATIC_COMMIT_LINE_BLAME.line)" +
+                " and STATIC_COMMIT_LINE_BLAME.repo = all_files.REPOSITORY_ID " +
+                " and STATIC_COMMIT_LINE_WARNING.resource = STATIC_COMMIT_LINE_BLAME.resource " +
+                " and STATIC_COMMIT_LINE_WARNING.line = STATIC_COMMIT_LINE_BLAME.line)" +
                 " ORDER BY " + sort;
 
             var warningsJoin = "SELECT * FROM ";
