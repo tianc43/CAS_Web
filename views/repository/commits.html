@@ -69,9 +69,13 @@
 		<div ng-repeat="commit in commits | limitTo:pageSize">
 			<div class="panel commit-panel panel-default" ng-class="{'panel-danger':((commit.contains_bug && display.type == 'historical') || (commit.glm_probability > .5 && display.type == 'predictive')), 'collapsed': !show_commit_body}">
                 <div ng-init="commit.fixes = $eval(commit.fixes)" class="panel-heading">
-					<div class="pull-right"> {{commit.author_name}} on {{commit.author_date | timeFormat_calendar}} </div>
+					<div class="pull-right"> {{commit.author_name}} on {{commit.author_date | timeFormat_calendar}}
+
+					</div>
 					<div class="panel-title-container">
                         <h3 class="panel-title" ng-click="show_commit_body = !show_commit_body">
+							<span class="label" ng-class="{'label-default': !commit.status, 'label-info': commit.status === 'QUEUED', 'label-primary': commit.status === 'PROCESSING', 'label-success': commit.build === 'BUILD', 'label-warning': commit.build === 'NO_POM', 'label-danger': commit.build === 'FAILURE'}" alt="{{(!commit.status) ? ('NOT QUEUED YET') : ((commit.status === 'PROCESSED') ? (commit.build) : (commit.status))}}"> </span>
+
                             <span ng-if="display.type == 'predictive'">
 								<span class="label label-success" ng-class="{'label-danger':commit.glm_probability > .5,'label-warning':commit.glm_probability > .25}">
 									{{commit.glm_probability | decimalToPercent}}
@@ -79,7 +83,7 @@
 							</span>
 							<span class="label label-default" ng-show="total_warnings(commit.staticWarnings)>0" ng-class="{ 'label-warning': new_warnings(commit.staticWarnings) > 0}">
 								<span> Warnings: {{total_warnings(commit.staticWarnings)}}</span>
-								<span ng-show="new_warnings(commit.staticWarnings) > 0"> New: {{new_warnings(commit.staticWarnings)}}</span>
+								<span ng-show="new_warnings(commit.staticWarnings) > e0"> New: {{new_warnings(commit.staticWarnings)}}</span>
 							</span>
 							<span ng-show="commit.classification != 'None'" class="label label-info">{{commit.classification}}</span>
 							<span ng-if="display.type == 'historical'"><span ng-if="commit.contains_bug"> Possible Bug-inducing: </span>
@@ -88,6 +92,15 @@
                     </div>
 				</div>
 				<div class="panel-body" ng-if="show_commit_body">
+					<div class="row">
+						<div class="col-md-12">
+							StaticGuru status:
+						<span class="label" ng-class="{'label-default': !commit.status, 'label-info': commit.status === 'QUEUED', 'label-primary': commit.status === 'PROCESSING', 'label-success': commit.build === 'BUILD', 'label-warning': commit.build === 'NO_POM', 'label-danger': commit.build === 'FAILURE'}">
+						{{(!commit.status) ? ("NOT QUEUED YET") : (commit.status === "PROCESSED") ? (commit.build) : (commit.status)}}
+						</span>
+
+						</div>
+					</div>
 					<div class="row">
 						<div class="col-md-12">
 							<div class="row">
@@ -123,6 +136,7 @@
 						<div class="col-md-8">
 							<div class="well cont-max-150" ng-bind="commit.commit_message"></div>
 						</div>
+
 						<!--<div class="col-md-4 cont-max-150" ng-show="(commit.fileschanged || commit.fileschanged.length > 0) && commit.fileschanged[0] != 'NULL'">-->
 							<!--Updated Files:-->
 							<!--<span class="label label-primary label-inline" ng-repeat="file in commit.fileschanged">{{file}}</span>-->
