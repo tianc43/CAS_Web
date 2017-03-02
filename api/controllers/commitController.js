@@ -180,7 +180,9 @@ var CommitController = {
                             generator_tool: commits[i].generator_tool,
                             weakness_description: commits[i].weakness,
                             is_new_line: commits[i].is_new_line,
-                            origin_commit: commits[i].origin_commit
+                            origin_commit: commits[i].origin_commit,
+                            origin_resource: commits[i].origin_resource.replace(/^\s+|\s+$/g ,''),
+                            origin_line: commits[i].origin_line
                         };
                         //sails.log.info(warning);
 

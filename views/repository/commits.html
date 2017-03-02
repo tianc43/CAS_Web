@@ -94,7 +94,7 @@
 				<div class="panel-body" ng-if="show_commit_body">
 					<div class="row">
 						<div class="col-md-12">
-							StaticGuru status:
+							WarningsGuru status:
 						<span class="label" ng-class="{'label-default': !commit.status, 'label-info': commit.status === 'QUEUED', 'label-primary': commit.status === 'PROCESSING', 'label-success': commit.build === 'BUILD', 'label-warning': commit.build === 'MISSING POM', 'label-danger': commit.build === 'FAILURE'}">
 						{{(!commit.status) ? ("NOT QUEUED YET") : (commit.status === "PROCESSED") ? ((commit.build === "MISSING POM") ? "Commit not compatible with build tool" : commit.build) : (commit.status)}}
 						</span>
@@ -193,7 +193,7 @@
 													<td>{{warning.generator_tool}}</td>
 													<td>{{warning.sfp}}</td>
 													<td>{{warning.cwe}}</td>
-													<td><a href="{{repo.url.slice(0,repo.url.size() -4 )}}/commit/{{warning.origin_commit.replace('^', '')}}" target="_blank">{{warning.origin_commit.replace('^', '').slice(0,8)}}</a></td>
+													<td><a href="{{repo.url.slice(0,repo.url.size() -4 )}}/blob/{{warning.origin_commit.replace('^', '')}}/{{warning.origin_resource}}#L{{warning.origin_line}}" target="_blank">{{warning.origin_commit.replace('^', '').slice(0,8)}}</a></td>
 													<td>{{warning.weakness_description}}</td>
 												</tr>
 											</tbody>
