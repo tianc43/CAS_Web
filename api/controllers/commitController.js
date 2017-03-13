@@ -173,27 +173,32 @@ var CommitController = {
                         //sails.log.info(commits[i]);
                         //sails.log.info(parsedCommits[commits[i].commit_hash]['staticWarnings']);
 
-                        var warning = {
-                            line_number: parseInt(commits[i].line, 10),
-                            sfp: commits[i].sfp,
-                            cwe: commits[i].cwe,
-                            generator_tool: commits[i].generator_tool,
-                            weakness_description: commits[i].weakness,
-                            is_new_line: commits[i].is_new_line,
-                            origin_commit: commits[i].origin_commit,
-                            origin_resource: commits[i].origin_resource.replace(/^\s+|\s+$/g ,''),
-                            origin_line: commits[i].origin_line
-                        };
-                        //sails.log.info(warning);
+                        // TODO bug sg-53 all warnings should have a line blame
+                        if (commits[i].origin_commit != null) {
 
-                        // TODO bug where file name does not exist
 
-                        try {
-                            parsedCommits[commits[i].commit_hash]['staticWarnings'][commits[i]['resource'].substring(1)].push(warning)
-                        } catch (err) {
+                            var warning = {
+                                line_number: parseInt(commits[i].line, 10),
+                                sfp: commits[i].sfp,
+                                cwe: commits[i].cwe,
+                                generator_tool: commits[i].generator_tool,
+                                weakness_description: commits[i].weakness,
+                                is_new_line: commits[i].is_new_line,
+                                origin_commit: commits[i].origin_commit,
+                                origin_resource: commits[i].origin_resource.replace(/^\s+|\s+$/g, ''),
+                                origin_line: commits[i].origin_line
+                            };
+                            //sails.log.info(warning);
 
-                            sails.log.info(err);
+                            // TODO bug where file name does not exist
 
+                            try {
+                                parsedCommits[commits[i].commit_hash]['staticWarnings'][commits[i]['resource'].substring(1)].push(warning)
+                            } catch (err) {
+
+                                sails.log.info(err);
+
+                            }
                         }
 
 
