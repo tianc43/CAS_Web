@@ -30,7 +30,7 @@ module.exports = function (grunt) {
 		};
   });
 
-
+console.log(grunt.option('gdsrc'))
   // Get path to core grunt dependencies from Sails
   var depsPath = grunt.option('gdsrc') || 'node_modules/sails/node_modules';
   grunt.loadTasks(depsPath + '/grunt-contrib-clean/tasks');
@@ -39,7 +39,7 @@ module.exports = function (grunt) {
   grunt.loadTasks(depsPath + '/grunt-contrib-watch/tasks');
   grunt.loadTasks(depsPath + '/grunt-contrib-uglify/tasks');
   grunt.loadTasks(depsPath + '/grunt-contrib-cssmin/tasks');
-  grunt.loadTasks('node_modules/grunt-contrib-less/tasks');
+  grunt.loadTasks(depsPath + '/grunt-contrib-less/tasks');
 
   // Project configuration.
   grunt.initConfig({
