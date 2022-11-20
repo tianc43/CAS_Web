@@ -4,6 +4,6 @@ module.exports.i18n = {
   locales: ['en', 'es'],
 
   // Where are your locale translations located?
-  localesDirectory: '/config/locales'
+  localesDirectory: './config/locales'
     
 };
